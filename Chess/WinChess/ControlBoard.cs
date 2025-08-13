@@ -18,7 +18,7 @@ namespace WinChess
             InitializeComponent();
         }
 
-        private int C_WIDTH = consts.gridSize * 8 + (consts.gridSize / 2) * 3;            //8 клеток + 3 половины клетки    |25|25|50|50|50|50|50|50|50|50|25|
+        private int C_WIDTH = consts.gridSize * 8 + (consts.gridSize / 2) * 3;            // 8 cells + 3 cell halves    |25|25|50|50|50|50|50|50|50|50|25|
         private int C_HEIGHT = consts.gridSize * 8 + (consts.gridSize / 2) * 3;
 
         private Bitmap MainBitmap = null;
@@ -63,14 +63,14 @@ namespace WinChess
                 gr.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 
                 //Пишем кто ходит
-                string text = Board.whiteToMove ? "Ход белых" : "Ход черных";
+                string text = Board.whiteToMove ? "White's move" : "Black's move";
                 Size size = _size(gr.MeasureString(text, FontText));
                 gr.DrawString(text, FontText, Brushes.DarkBlue, this.Width / 2 - size.Width / 2, initialY / 2 - size.Height / 2);
 
                 //Пишем у кого Шах
                 text = "";
-                if (Board.whiteInCheck) text = "Шах белому королю!";
-                if (Board.blackInCheck) text = "Шах черному королю!";
+                if (Board.whiteInCheck) text = "Check to the white king!";
+                if (Board.blackInCheck) text = "Check to the black king!";
                 if (text.Length > 0)
                 {
                     size = _size(gr.MeasureString(text, FontText));
@@ -103,32 +103,32 @@ namespace WinChess
                     {
                         if (Board[r, c] == null) continue;
                         int x = (c * consts.gridSize) + initialX;
-                        int y = consts.gridSize * 7 - (r * consts.gridSize) + initialY;  //Мы должны учитывать, что координаты на форме идут сверху вниз и нам нужно инверсировать координаты по вертикали
-                        Board[r, c].Rect = new Rectangle(x, y, consts.gridSize, consts.gridSize);  //Задаем область расположения на доске
+                        int y = consts.gridSize * 7 - (r * consts.gridSize) + initialY;  // We must take into account that the coordinates on the form go from top to bottom and we need to invert the coordinates vertically
+                        Board[r, c].Rect = new Rectangle(x, y, consts.gridSize, consts.gridSize);  // Set the location area on the board
                         gr.DrawImage(Board[r, c].Image, x, y);
                     }
                 }
 
-                //Отрисовываем выбранную фигуру и возможные ходы
+                // We draw the selected figure and possible moves
                 {
                     ChessPiece piece = Board.GetSelected();
                     if (piece != null)
                     {
-                        foreach (var rc in piece.CanMoves)               //Куда можно ходить
+                        foreach (var rc in piece.CanMoves)               // Where can I go?
                         {
                             int r = rc / 10;
                             int c = rc - r * 10;
                             int x = (c * consts.gridSize) + initialX;
-                            int y = consts.gridSize * 7 - (r * consts.gridSize) + initialY;  //Мы должны учитывать, что координаты на форме идут сверху вниз и нам нужно инверсировать координаты по вертикали
+                            int y = consts.gridSize * 7 - (r * consts.gridSize) + initialY;  // We must take into account that the coordinates on the form go from top to bottom and we need to invert the coordinates vertically
                             gr.DrawEllipse(PenMoves, x, y, consts.gridSize, consts.gridSize);
                         }
 
-                        foreach (var rc in piece.CanAttackes)           //Куда будем атаковать
+                        foreach (var rc in piece.CanAttackes)           // Where will we attack?
                         {
                             int r = rc / 10;
                             int c = rc - r * 10;
                             int x = (c * consts.gridSize) + initialX;
-                            int y = consts.gridSize * 7 - (r * consts.gridSize) + initialY;  //Мы должны учитывать, что координаты на форме идут сверху вниз и нам нужно инверсировать координаты по вертикали
+                            int y = consts.gridSize * 7 - (r * consts.gridSize) + initialY;  // We must take into account that the coordinates on the form go from top to bottom and we need to invert the coordinates vertically
                             gr.DrawEllipse(PenAttackes, x, y, consts.gridSize, consts.gridSize);
                         }
 
@@ -166,7 +166,7 @@ namespace WinChess
         private void ControlBoard_MouseUp(object sender, MouseEventArgs e)
         {
             ChessPiece piece = Board.GetSelected();
-            if (piece == null) //Если выбранной фигуры нет, то проверяем координаты и выбираем фигуру
+            if (piece == null) // If there is no selected figure, then we check the coordinates and select the figure
             {
                 if (Board.SetSelected(e.Location))
                 {
@@ -194,9 +194,25 @@ namespace WinChess
 
         private void MoveTo(ChessPiece piece, int toR, int toC)
         {
-            if (Board.IsCanMove(piece.row, piece.col, toR, toC, false))               //Делаем ход с выключенным флагом
+            if (Board.IsCanMove(piece.row, piece.col, toR, toC, false))               // We make a move with the flag turned off
             {
-                Board.movePiece(piece.row, piece.col, toR, toC);
+                bool promotion = Board.movePiece(piece.row, piece.col, toR, toC);
+                if (promotion)
+                {
+                    bool isWhite = Board[toR, toC] is Pieces.WhitePawn; // still a pawn right now
+                    using (var dlg = new WinChess.PromotionDialog(isWhite))
+                    {
+                        if (dlg.ShowDialog(this) == DialogResult.OK)
+                        {
+                            Board.PromotePawnAt(toR, toC, dlg.Choice);
+                        }
+                        else
+                        {
+                            // If dialog is canceled, you can default to queen or revert move; here we default to queen:
+                            Board.PromotePawnAt(toR, toC, WinChess.PromotionChoice.Queen);
+                        }
+                    }
+                }
                 piece.hasMoved = true;
 
                 Board.ClearIsJump();
@@ -222,22 +238,22 @@ namespace WinChess
         {
             timer_check.Stop();
 
-            if (Board.IsCheckmate()) //Проверяем, что уже некуда ходить
+            if (Board.IsCheckmate()) // We check that there is nowhere else to go
             {
-                if (Board.whiteInCheck || Board.blackInCheck)   //Если перед этим был шах, то получаем мат
+                if (Board.whiteInCheck || Board.blackInCheck)   // If there was a check before, then we get checkmate.
                 {
                     if (Board.whiteToMove)
                     {
-                        MessageBox.Show("Белым поставили Мат!", "WinChess", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("White has been checkmated!", "WinChess", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                     else
                     {
-                        MessageBox.Show("Черным поставили Мат!", "WinChess", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Black has been checkmated!", "WinChess", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
-                else if (!Board.whiteInCheck && !Board.blackInCheck) //иначе пат
+                else if (!Board.whiteInCheck && !Board.blackInCheck) // otherwise stalemate
                 {
-                    MessageBox.Show("В игре Пат!", "WinChess", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("It's a draw!", "WinChess", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }

@@ -32,7 +32,7 @@ namespace WinChess
 
         private void maintool_newgame_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show("Вы хотите начать игру заново?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult dr = MessageBox.Show("New chess game?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (dr == DialogResult.Yes)
             {
                 cBoard.Initialize();

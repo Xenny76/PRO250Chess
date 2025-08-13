@@ -28,3 +28,15 @@ C:\Neumont\Q8\PRO250\Chess\WinChess\obj\Debug\WinChess.csproj.GenerateResource.c
 C:\Neumont\Q8\PRO250\Chess\WinChess\obj\Debug\WinChess.csproj.CoreCompileInputs.cache
 C:\Neumont\Q8\PRO250\Chess\WinChess\obj\Debug\WinChess.exe
 C:\Neumont\Q8\PRO250\Chess\WinChess\obj\Debug\WinChess.pdb
+C:\Neumont\Q8\PRO250\PRO250Chess\Chess\Release\WinChess.exe.config
+C:\Neumont\Q8\PRO250\PRO250Chess\Chess\Release\WinChess.exe
+C:\Neumont\Q8\PRO250\PRO250Chess\Chess\Release\WinChess.pdb
+C:\Neumont\Q8\PRO250\PRO250Chess\Chess\WinChess\obj\Debug\WinChess.csproj.AssemblyReference.cache
+C:\Neumont\Q8\PRO250\PRO250Chess\Chess\WinChess\obj\Debug\WinChess.exe.config
+C:\Neumont\Q8\PRO250\PRO250Chess\Chess\WinChess\obj\Debug\WinChess.ControlBoard.resources
+C:\Neumont\Q8\PRO250\PRO250Chess\Chess\WinChess\obj\Debug\WinChess.FormMain.resources
+C:\Neumont\Q8\PRO250\PRO250Chess\Chess\WinChess\obj\Debug\WinChess.Properties.Resources.resources
+C:\Neumont\Q8\PRO250\PRO250Chess\Chess\WinChess\obj\Debug\WinChess.csproj.GenerateResource.cache
+C:\Neumont\Q8\PRO250\PRO250Chess\Chess\WinChess\obj\Debug\WinChess.csproj.CoreCompileInputs.cache
+C:\Neumont\Q8\PRO250\PRO250Chess\Chess\WinChess\obj\Debug\WinChess.exe
+C:\Neumont\Q8\PRO250\PRO250Chess\Chess\WinChess\obj\Debug\WinChess.pdb

@@ -51,7 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Pieces\BlackBishop.cs" />
+    <Compile Include="Pieces\Bishop.cs" />
     <Compile Include="Pieces\BlackKing.cs" />
     <Compile Include="Pieces\BlackKnight.cs" />
     <Compile Include="Pieces\BlackPawn.cs" />
@@ -72,13 +72,15 @@
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="Pieces\WhiteBishop.cs" />
     <Compile Include="Pieces\WhiteKing.cs" />
     <Compile Include="Pieces\WhiteKnight.cs" />
     <Compile Include="Pieces\WhitePawn.cs" />
     <Compile Include="Pieces\WhiteQueen.cs" />
     <Compile Include="Pieces\WhiteRook.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="PromotionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="ControlBoard.resx">
       <DependentUpon>ControlBoard.cs</DependentUpon>

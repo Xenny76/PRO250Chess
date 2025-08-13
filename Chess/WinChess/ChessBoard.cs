@@ -56,18 +56,18 @@ namespace WinChess
 
             board[0,0] = new Pieces.WhiteRook(0, 0);
             board[0,1] = new Pieces.WhiteKnight(0, 1);
-            board[0,2] = new Pieces.WhiteBishop(0, 2);
+            board[0,2] = new Pieces.Bishop(0, 2, true);
             board[0,3] = new Pieces.WhiteQueen(0, 3);
             board[0,4] = new Pieces.WhiteKing(0, 4);
-            board[0,5] = new Pieces.WhiteBishop(0, 5);
+            board[0,5] = new Pieces.Bishop(0, 5, true);
             board[0,6] = new Pieces.WhiteKnight(0, 6);
             board[0,7] = new Pieces.WhiteRook(0, 7);
             board[7,0] = new Pieces.BlackRook(7, 0);
             board[7,1] = new Pieces.BlackKnight(7, 1);
-            board[7,2] = new Pieces.BlackBishop(7, 2);
+            board[7,2] = new Pieces.Bishop(7, 2, false);
             board[7,3] = new Pieces.BlackQueen(7, 3);
             board[7,4] = new Pieces.BlackKing(7, 4);
-            board[7,5] = new Pieces.BlackBishop(7, 5);
+            board[7,5] = new Pieces.Bishop(7, 5, false);
             board[7,6] = new Pieces.BlackKnight(7, 6);
             board[7,7] = new Pieces.BlackRook(7, 7);
         }
@@ -114,7 +114,7 @@ namespace WinChess
             for (int r = 0; r < 8; r++)
                 for (int c = 0; c < 8; c++)
                 {
-                    if (IsCanMove(piece.row, piece.col, r, c, true)) //Вызываем метод проверки хода, с включенным флагом onlyCheck
+                    if (IsCanMove(piece.row, piece.col, r, c, true)) // We call the move check method with the onlyCheck flag enabled
                     {
                         if (board[r, c] == null)
                             piece.CanMoves.Add(r * 10 + c);
@@ -137,7 +137,7 @@ namespace WinChess
             ChessPiece blackKing = null;
             ChessPiece temp = board[toR, toC];
 
-            //Получим королей
+            // Let's get kings
             for (int r = 0; r < 8; r++)
             {
                 for (int c = 0; c < 8; c++)
@@ -147,7 +147,7 @@ namespace WinChess
                 }
             }
 
-            //Проверяем, если король уже под Шахом и после этого хода он также будет под шахом, то ходить нельзя. Сделали ход, который не убирает короля из под шаха
+            // We check if the king is already under check and after this move it will also be under check, then we cannot move. We made a move that does not remove the king from check
             if (whiteKing.IsInCheck(this))
             {
                 movePiece(fromR, fromC, toR, toC);
@@ -174,7 +174,7 @@ namespace WinChess
                 board[toR, toC] = temp;
             }
 
-            //Проверяем, что после хода, король окажется под Шахом. Сделали ход, который подставляет своего короля под шах
+            // We check that after the move, the king will be under check. We made a move that puts our king under check.
             movePiece(fromR, fromC, toR, toC);
             if (whiteToMove && whiteKing.IsInCheck(this))
             {
@@ -196,7 +196,7 @@ namespace WinChess
                 return true;
             }
 
-            //Выставляем флаг шах
+            // We put up the check flag
             if (whiteKing.IsInCheck(this))
             {
                 whiteInCheck = true;
@@ -215,16 +215,17 @@ namespace WinChess
             return true;
         }
 
-        internal void movePiece(int fromR, int fromC, int toR, int toC)
+        internal bool movePiece(int fromR, int fromC, int toR, int toC)
         {
             ChessPiece aPiece = board[fromR, fromC];
             aPiece.row = toR;
             aPiece.col = toC;
             board[toR, toC] = aPiece;
             board[fromR, fromC] = null;
+            return IsPawnTransformation(fromR, fromC, toC, toC);
         }
 
-        internal bool IsCheckmate()     //Получаем все возможные ходы
+        internal bool IsCheckmate()     // We get all possible moves
         {
             for (int r = 0; r < 8; r++)
             {
@@ -260,9 +261,9 @@ namespace WinChess
             return result.ToArray();
         }
 
-        internal void ClearIsJump() //Очищаем флаг прыжка пешки
+        internal void ClearIsJump() // Clearing the Pawn Jump Flag
         {
-            //Если текущий ход белых или черных, то уже был ход противоположной стороны и флаг нужно очистить даже не воспользовались
+            // If the current move is white or black, then the opposite side has already made a move and the flag needs to be cleared, even if it wasn't used
             for (int r = 0; r < 8; r++)
             {
                 for (int c = 0; c < 8; c++)
@@ -280,7 +281,7 @@ namespace WinChess
             }
         }
 
-        //Проверяем если пешка дошла до границы, то позволяем выбрать фигуру
+        // We check if the pawn has reached the border, then we allow choosing a piece
         internal bool IsPawnTransformation(int fromR, int fromC, int toR, int toC) 
         {
             if (board[fromR, fromC] == null) return false;
@@ -293,6 +294,31 @@ namespace WinChess
                 if (toR == 7) return true;
             }
             return false;
+        }
+
+        internal void PromotePawnAt(int r, int c, WinChess.PromotionChoice choice)
+        {
+            var p = this[r, c];
+            if (p == null) return;
+
+            bool isWhite = p is Pieces.WhitePawn;
+
+            // Replace the pawn with the chosen piece at the same square
+            switch (choice)
+            {
+                case WinChess.PromotionChoice.Queen:
+                    this[r, c] = isWhite ? new Pieces.WhiteQueen(r, c) : new Pieces.BlackQueen(r, c);
+                    break;
+                case WinChess.PromotionChoice.Rook:
+                    this[r, c] = isWhite ? new Pieces.WhiteRook(r, c) : new Pieces.BlackRook(r, c);
+                    break;
+                case WinChess.PromotionChoice.Bishop:
+                    this[r, c] = isWhite ? new Pieces.Bishop(r, c, true) : new Pieces.Bishop(r, c, false);
+                    break;
+                case WinChess.PromotionChoice.Knight:
+                    this[r, c] = isWhite ? new Pieces.WhiteKnight(r, c) : new Pieces.BlackKnight(r, c);
+                    break;
+            }
         }
     }
 }

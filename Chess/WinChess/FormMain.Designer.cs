@@ -39,11 +39,13 @@ namespace WinChess
             // maintool
             // 
             this.maintool.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.maintool.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.maintool.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.maintool_newgame});
             this.maintool.Location = new System.Drawing.Point(0, 0);
             this.maintool.Name = "maintool";
-            this.maintool.Size = new System.Drawing.Size(727, 25);
+            this.maintool.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
+            this.maintool.Size = new System.Drawing.Size(1090, 38);
             this.maintool.TabIndex = 1;
             // 
             // maintool_newgame
@@ -52,30 +54,31 @@ namespace WinChess
             this.maintool_newgame.Image = ((System.Drawing.Image)(resources.GetObject("maintool_newgame.Image")));
             this.maintool_newgame.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.maintool_newgame.Name = "maintool_newgame";
-            this.maintool_newgame.Size = new System.Drawing.Size(119, 22);
-            this.maintool_newgame.Text = "Начать игру заново";
+            this.maintool_newgame.Size = new System.Drawing.Size(142, 33);
+            this.maintool_newgame.Text = "Start game over";
             this.maintool_newgame.Click += new System.EventHandler(this.maintool_newgame_Click);
             // 
             // cBoard
             // 
             this.cBoard.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cBoard.Location = new System.Drawing.Point(0, 25);
+            this.cBoard.Location = new System.Drawing.Point(0, 38);
             this.cBoard.Margin = new System.Windows.Forms.Padding(0);
             this.cBoard.Name = "cBoard";
-            this.cBoard.Size = new System.Drawing.Size(727, 537);
+            this.cBoard.Size = new System.Drawing.Size(1090, 827);
             this.cBoard.TabIndex = 0;
             // 
             // FormMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.ClientSize = new System.Drawing.Size(727, 562);
+            this.ClientSize = new System.Drawing.Size(1090, 865);
             this.Controls.Add(this.cBoard);
             this.Controls.Add(this.maintool);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MaximizeBox = false;
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
