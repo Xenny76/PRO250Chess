@@ -29,13 +29,14 @@ namespace WinChess
         public bool whiteInCheck = false;
         public bool blackInCheck = false;
 
-        internal void Initialize()
+        internal void Initialize(bool isClassic)
         {
             board = new ChessPiece[8, 8];
             whiteToMove = true;
             whiteInCheck = false;
             blackInCheck = false;
-            InitializeBoard();
+            if (isClassic) InitializeBoard();
+            else Initialize960Board();
         }
 
         private void InitializeBoard()
@@ -70,6 +71,81 @@ namespace WinChess
             board[7,5] = new Pieces.Bishop(7, 5, false);
             board[7,6] = new Pieces.Knight(7, 6, false);
             board[7,7] = new Pieces.Rook(7, 7, false);
+        }
+
+        private void Initialize960Board()
+        {
+            for (int r = 0; r < 8; r++)
+                for (int c = 0; c < 8; c++)
+                    board[r, c] = null;
+
+            var rng = new System.Random();
+            var back = Generate960BackRank(rng); // 8 chars: R/N/B/Q/K with bishops on opposite colors and K between Rs
+
+            // White back rank on row 0
+            for (int c = 0; c < 8; c++)
+            {
+                switch (back[c])
+                {
+                    case 'R': board[0, c] = new Pieces.Rook(0, c, true); break;
+                    case 'N': board[0, c] = new Pieces.Knight(0, c, true); break;
+                    case 'B': board[0, c] = new Pieces.Bishop(0, c, true); break;
+                    case 'Q': board[0, c] = new Pieces.Queen(0, c, true); break;
+                    case 'K': board[0, c] = new Pieces.King(0, c, true); break;
+                }
+            }
+
+            // Pawns
+            for (int i = 0; i < 8; i++)
+            {
+                board[1, i] = new Pieces.Pawn(1, i, true);
+                board[6, i] = new Pieces.Pawn(6, i, false);
+            }
+
+            // Mirror for black on row 7 (same files, black pieces)
+            for (int c = 0; c < 8; c++)
+            {
+                switch (back[c])
+                {
+                    case 'R': board[7, c] = new Pieces.Rook(7, c, false); break;
+                    case 'N': board[7, c] = new Pieces.Knight(7, c, false); break;
+                    case 'B': board[7, c] = new Pieces.Bishop(7, c, false); break;
+                    case 'Q': board[7, c] = new Pieces.Queen(7, c, false); break;
+                    case 'K': board[7, c] = new Pieces.King(7, c, false); break;
+                }
+            }
+        }
+
+        private char[] Generate960BackRank(System.Random rng)
+        {
+            var back = new char[8];
+            var remaining = new System.Collections.Generic.List<int>(System.Linq.Enumerable.Range(0, 8));
+
+            // 1) Bishops on opposite colors
+            var dark = new[] { 0, 2, 4, 6 };
+            var light = new[] { 1, 3, 5, 7 };
+            int bDark = dark[rng.Next(dark.Length)];
+            back[bDark] = 'B'; remaining.Remove(bDark);
+            int bLight = light[rng.Next(light.Length)];
+            back[bLight] = 'B'; remaining.Remove(bLight);
+
+            // 2) Queen
+            int q = remaining[rng.Next(remaining.Count)];
+            back[q] = 'Q'; remaining.Remove(q);
+
+            // 3) Two Knights
+            int n1 = remaining[rng.Next(remaining.Count)];
+            back[n1] = 'N'; remaining.Remove(n1);
+            int n2 = remaining[rng.Next(remaining.Count)];
+            back[n2] = 'N'; remaining.Remove(n2);
+
+            // 4) Remaining three squares become R-K-R in file order so K lies between rooks
+            remaining.Sort(); // a < b < c
+            back[remaining[0]] = 'R';
+            back[remaining[1]] = 'K';
+            back[remaining[2]] = 'R';
+
+            return back;
         }
 
         internal ChessPiece GetSelected()

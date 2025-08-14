@@ -37,14 +37,14 @@ namespace WinChess
 
         public ChessBoard Board = new ChessBoard();
 
-        internal void Initialize()
+        internal void Initialize(bool isClassic)
         {
             this.Width = C_WIDTH;
             this.Height = C_HEIGHT;
             this.Left = this.Parent.ClientSize.Width / 2 - this.Width / 2;
             this.Top = this.Parent.ClientSize.Height / 2 - this.Height / 2;
 
-            Board.Initialize();
+            Board.Initialize(isClassic);
         }
 
         internal void UpdateData()

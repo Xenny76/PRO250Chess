@@ -12,15 +12,21 @@ namespace WinChess
 {
     public partial class FormMain : Form
     {
+        private readonly bool isClassic = true;
         public FormMain()
         {
             InitializeComponent();
             this.ClientSize = new Size(consts.gridSize * 10, consts.gridSize * 10 + consts.gridSize / 2);
         }
 
+        public FormMain(bool isClassic) : this()
+        {
+            this.isClassic = isClassic;
+        }
+
         private void FormMain_Load(object sender, EventArgs e)
         {
-            cBoard.Initialize();
+            cBoard.Initialize(isClassic);
 
             cBoard.UpdateData();
         }
@@ -35,7 +41,7 @@ namespace WinChess
             DialogResult dr = MessageBox.Show("New chess game?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (dr == DialogResult.Yes)
             {
-                cBoard.Initialize();
+                cBoard.Initialize(isClassic);
 
                 cBoard.UpdateData();
             }
