@@ -29,14 +29,14 @@ namespace WinChess
         public bool whiteInCheck = false;
         public bool blackInCheck = false;
 
-        internal void Initialize(bool isClassic)
+        internal void Initialize(bool isClassic, int? seed = null)
         {
             board = new ChessPiece[8, 8];
             whiteToMove = true;
             whiteInCheck = false;
             blackInCheck = false;
             if (isClassic) InitializeBoard();
-            else Initialize960Board();
+            else Initialize960Board(seed);
         }
 
         private void InitializeBoard()
@@ -73,13 +73,13 @@ namespace WinChess
             board[7,7] = new Pieces.Rook(7, 7, false);
         }
 
-        private void Initialize960Board()
+        private void Initialize960Board(int? seed)
         {
             for (int r = 0; r < 8; r++)
                 for (int c = 0; c < 8; c++)
                     board[r, c] = null;
 
-            var rng = new System.Random();
+            var rng = seed.HasValue ? new System.Random(seed.Value) : new System.Random();
             var back = Generate960BackRank(rng); // 8 chars: R/N/B/Q/K with bishops on opposite colors and K between Rs
 
             // White back rank on row 0
