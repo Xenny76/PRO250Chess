@@ -50,26 +50,26 @@ namespace WinChess
 
             for (int i = 0; i < 8; i++)
             {
-                board[1,i] = new Pieces.WhitePawn(1, i);
-                board[6,i] = new Pieces.BlackPawn(6, i);
+                board[1,i] = new Pieces.Pawn(1, i, true);
+                board[6,i] = new Pieces.Pawn(6, i, false);
             }
 
-            board[0,0] = new Pieces.WhiteRook(0, 0);
-            board[0,1] = new Pieces.WhiteKnight(0, 1);
+            board[0,0] = new Pieces.Rook(0, 0, true);
+            board[0,1] = new Pieces.Knight(0, 1, true);
             board[0,2] = new Pieces.Bishop(0, 2, true);
-            board[0,3] = new Pieces.WhiteQueen(0, 3);
-            board[0,4] = new Pieces.WhiteKing(0, 4);
+            board[0,3] = new Pieces.Queen(0, 3, true);
+            board[0,4] = new Pieces.King(0, 4, true);
             board[0,5] = new Pieces.Bishop(0, 5, true);
-            board[0,6] = new Pieces.WhiteKnight(0, 6);
-            board[0,7] = new Pieces.WhiteRook(0, 7);
-            board[7,0] = new Pieces.BlackRook(7, 0);
-            board[7,1] = new Pieces.BlackKnight(7, 1);
+            board[0,6] = new Pieces.Knight(0, 6, true);
+            board[0,7] = new Pieces.Rook(0, 7, true);
+            board[7,0] = new Pieces.Rook(7, 0, false);
+            board[7,1] = new Pieces.Knight(7, 1, false);
             board[7,2] = new Pieces.Bishop(7, 2, false);
-            board[7,3] = new Pieces.BlackQueen(7, 3);
-            board[7,4] = new Pieces.BlackKing(7, 4);
+            board[7,3] = new Pieces.Queen(7, 3, false);
+            board[7,4] = new Pieces.King(7, 4, false);
             board[7,5] = new Pieces.Bishop(7, 5, false);
-            board[7,6] = new Pieces.BlackKnight(7, 6);
-            board[7,7] = new Pieces.BlackRook(7, 7);
+            board[7,6] = new Pieces.Knight(7, 6, false);
+            board[7,7] = new Pieces.Rook(7, 7, false);
         }
 
         internal ChessPiece GetSelected()
@@ -142,8 +142,8 @@ namespace WinChess
             {
                 for (int c = 0; c < 8; c++)
                 {
-                    if (board[r, c] is Pieces.WhiteKing) whiteKing = board[r, c];
-                    if (board[r, c] is Pieces.BlackKing) blackKing = board[r, c];
+                    if (board[r, c] is Pieces.King && board[r, c].IsWhite) whiteKing = board[r, c];
+                    if (board[r, c] is Pieces.King && board[r, c].IsBlack) blackKing = board[r, c];
                 }
             }
 
@@ -221,8 +221,9 @@ namespace WinChess
             aPiece.row = toR;
             aPiece.col = toC;
             board[toR, toC] = aPiece;
+            bool promotion = IsPawnTransformation(fromR, fromC, toR, toC);
             board[fromR, fromC] = null;
-            return IsPawnTransformation(fromR, fromC, toC, toC);
+            return promotion;
         }
 
         internal bool IsCheckmate()     // We get all possible moves
@@ -285,11 +286,11 @@ namespace WinChess
         internal bool IsPawnTransformation(int fromR, int fromC, int toR, int toC) 
         {
             if (board[fromR, fromC] == null) return false;
-            if (board[fromR, fromC] is Pieces.BlackPawn)
+            if (board[fromR, fromC] is Pieces.Pawn && board[fromR, fromC].IsBlack)
             {
                 if (toR == 0) return true;
             }
-            if (board[fromR, fromC] is Pieces.WhitePawn)
+            if (board[fromR, fromC] is Pieces.Pawn && board[fromR, fromC].IsWhite)
             {
                 if (toR == 7) return true;
             }
@@ -301,22 +302,22 @@ namespace WinChess
             var p = this[r, c];
             if (p == null) return;
 
-            bool isWhite = p is Pieces.WhitePawn;
+            bool isWhite = p is Pieces.Pawn && p.IsWhite;
 
             // Replace the pawn with the chosen piece at the same square
             switch (choice)
             {
                 case WinChess.PromotionChoice.Queen:
-                    this[r, c] = isWhite ? new Pieces.WhiteQueen(r, c) : new Pieces.BlackQueen(r, c);
+                    this[r, c] = isWhite ? new Pieces.Queen(r, c, true) : new Pieces.Queen(r, c, false);
                     break;
                 case WinChess.PromotionChoice.Rook:
-                    this[r, c] = isWhite ? new Pieces.WhiteRook(r, c) : new Pieces.BlackRook(r, c);
+                    this[r, c] = isWhite ? new Pieces.Rook(r, c, true) : new Pieces.Rook(r, c, false);
                     break;
                 case WinChess.PromotionChoice.Bishop:
                     this[r, c] = isWhite ? new Pieces.Bishop(r, c, true) : new Pieces.Bishop(r, c, false);
                     break;
                 case WinChess.PromotionChoice.Knight:
-                    this[r, c] = isWhite ? new Pieces.WhiteKnight(r, c) : new Pieces.BlackKnight(r, c);
+                    this[r, c] = isWhite ? new Pieces.Knight(r, c, true) : new Pieces.Knight(r, c, false);
                     break;
             }
         }

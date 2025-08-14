@@ -184,7 +184,7 @@ namespace WinChess
                 else
                 {
                     int toC = (e.Location.X - initialX) / consts.gridSize;
-                    int toR = 7 - ((e.Location.Y - initialY) / 50);
+                    int toR = 7 - ((e.Location.Y - initialY) / consts.gridSize);
                     MoveTo(piece, toR, toC);
                 }
             }
@@ -199,7 +199,7 @@ namespace WinChess
                 bool promotion = Board.movePiece(piece.row, piece.col, toR, toC);
                 if (promotion)
                 {
-                    bool isWhite = Board[toR, toC] is Pieces.WhitePawn; // still a pawn right now
+                    bool isWhite = Board[toR, toC] is Pieces.Pawn && Board[toR, toC].IsWhite; // still a pawn right now
                     using (var dlg = new WinChess.PromotionDialog(isWhite))
                     {
                         if (dlg.ShowDialog(this) == DialogResult.OK)
